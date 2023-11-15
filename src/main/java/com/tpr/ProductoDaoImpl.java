@@ -15,8 +15,12 @@ public class ProductoDaoImpl implements ProductoDao {
             double precio = product.getPrecio();
 
             preparedStatement.setInt(1,id);
+            preparedStatement.setInt(2,60);
+            preparedStatement.setInt(3,600);
             preparedStatement.setString(4,desc);
             preparedStatement.setDouble(5,precio);
+            preparedStatement.setInt(6,100);
+            preparedStatement.executeUpdate();
 
 
         } catch (SQLException e) {
@@ -39,8 +43,7 @@ public class ProductoDaoImpl implements ProductoDao {
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {
 
-                        product = new Producto(id, rs.getString("nombre"),
-                                rs.getDouble("precio"));
+                        product = new Producto(id, rs.getString("descripcion"),rs.getDouble("preciounit"));
                     }
                 }
             }
@@ -60,13 +63,16 @@ public class ProductoDaoImpl implements ProductoDao {
 
     public void update (Producto product){
         try(Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres","root","root");
-            PreparedStatement preparedStatement = connection.prepareStatement("update productos set preciounit = ? where productoid = ?") ){
+            PreparedStatement preparedStatement = connection.prepareStatement("update productos set preciounit = ?, descripcion = ? where productoid = ?") ){
 
             double precio = product.getPrecio();
             int id = product.getId();
+            String nombre = product.getNombre();
 
             preparedStatement.setDouble(1,precio);
-            preparedStatement.setInt(1,id);
+            preparedStatement.setString(2,nombre);
+            preparedStatement.setInt(3,id);
+            preparedStatement.executeUpdate();
 
 
         }catch(SQLException e){
@@ -90,6 +96,7 @@ public class ProductoDaoImpl implements ProductoDao {
                 if (idTable == id){
                     //si son iguales, eliminaré
                     preparedStatement.setInt(1, id);
+                    preparedStatement.executeUpdate();
                     eliminado = true;
                 }
 
